@@ -38,3 +38,6 @@ Thumbs.db
 
 # Alembic — keep migration files tracked, ignore only their bytecode cache
 alembic/versions/__pycache__/
+
+# files
+seeddata.sql

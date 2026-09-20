@@ -24,3 +24,9 @@ class UserResponse(BaseModel):
 
   class config:
     from_attributes = True
+
+class AuthRequest(BaseModel):
+    token: str
+
+class ConsumerCreate(BaseModel):
+  name: str

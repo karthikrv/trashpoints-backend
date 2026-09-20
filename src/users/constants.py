@@ -2,8 +2,8 @@ from enum import StrEnum
 
 
 class RoleEnum(StrEnum):
-    CONSUMER = "citizen"
-    PARTNER = "collector"
+    CONSUMER = "consumer"
+    PARTNER = "partner"
     ADMIN = "admin"
 
 class AuthProviderEnum(StrEnum):
