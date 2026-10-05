@@ -45,7 +45,7 @@ class DropOffEventItem(Base):
   __tablename__ = 'drop_off_event_item'
 
   id = Column(String(255), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
-  waste_type = Column(String(255), nullable=True)
+  waste_type = Column(String(255), nullable=False)
   points = Column(Float, nullable=True)
   weight = Column(Float, nullable=True)
   drop_off_event_id = Column(String(255), ForeignKey("drop_off_event.id"), nullable=False)
@@ -61,7 +61,7 @@ class PointTransaction(Base):
   depositor_id = Column(String(255), ForeignKey("user.id"), nullable=False)
   type = Column(String(255), nullable=False)
   points = Column(Float, nullable=False)
-  drop_off_event_id = Column(String(255), ForeignKey("drop_off_event.id"), nullable=True)
+  drop_off_event_id = Column(String(255), ForeignKey("drop_off_event.id"), nullable=True, unique=True)
   redemption_id = Column(String(255), ForeignKey("redemption.id"), nullable=True)
   description = Column(String(255), nullable=True)
   created_at = Column(DateTime, server_default=func.now())
