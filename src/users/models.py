@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Boolean, Column, DateTime, String, func
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, func
 from sqlalchemy.orm import relationship
 
 from src.database import Base
@@ -22,3 +22,10 @@ class User(Base):
     status = Column(Boolean, default=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    kiosk_id = Column(String(255), ForeignKey("kiosk.id"),nullable=True)
+    
+    assigned_kiosk = relationship("Kiosk", back_populates='partners')
+    dropped_events = relationship("DropOffEvent", foreign_keys="DropOffEvent.depositor_id", back_populates="dropped_by")
+    collected_events = relationship("DropOffEvent", foreign_keys="DropOffEvent.collector_id", back_populates="collected_by")
+    transactions = relationship("PointTransaction", back_populates="depositor")
+    redemptions = relationship("Redemption", back_populates="depositor")

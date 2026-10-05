@@ -3,10 +3,12 @@ from sqlalchemy.orm import Session
 
 from src.database import get_db
 from src.users import models, schemas
+from src.users import service as user_service
 from src.users.dependencies import (create_consumer_details,
                                     resolve_consumer_details,
-                                    resolve_user_org_details)
-from src.users.schemas import AuthRequest, ConsumerCreate
+                                    resolve_user_org_details,
+                                    verify_internal_secret)
+from src.users.schemas import AuthRequest, ConsumerCreate, ProvisionRequest
 
 router = APIRouter(prefix='/users', tags=["users"])
 
@@ -34,3 +36,7 @@ async def verify_consumer(user_consumer_details: dict = Depends(resolve_consumer
 @router.post("/signup-consumer", status_code=201)
 async def create_new_consumer_details(new_user : dict = Depends(create_consumer_details)):
   return { "status" : "success", "user" : new_user }
+
+@router.post("/provision", response_model=schemas.UserResponse, status_code=201)
+async def provision_user(data: schemas.ProvisionRequest, db: Session = Depends(get_db), _: None = Depends(verify_internal_secret)):
+  return user_service.create_provisioned_user(db=db, data=data)

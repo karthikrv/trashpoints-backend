@@ -30,3 +30,8 @@ class AuthRequest(BaseModel):
 
 class ConsumerCreate(BaseModel):
   name: str
+
+class ProvisionRequest(BaseModel):
+  name: str
+  email: EmailStr
+  role: RoleEnum

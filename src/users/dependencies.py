@@ -1,11 +1,11 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from sqlalchemy.orm import Session
 
-from src.config import GOOGLE_CLIENT_ID
+from src.config import GOOGLE_CLIENT_ID, TRASHPOINT_INTERNAL_API_SECRET
 from src.database import get_db
 from src.users import service as user_service
 from src.users.schemas import AuthRequest, ConsumerCreate
@@ -20,6 +20,7 @@ def verify_google_token(auth_request: AuthRequest) -> dict:
                             GOOGLE_CLIENT_ID
                           )
         user_info["isAuthorised"] = True
+        print("Decoded Google token:", user_info)
         return user_info
     except ValueError:
         raise HTTPException(
@@ -48,3 +49,9 @@ def resolve_consumer_details( db: Session = Depends(get_db), user_info : dict = 
 
 def create_consumer_details( userDetails: ConsumerCreate, db: Session = Depends(get_db), user_info : dict = Depends(verify_firebase_token)) -> dict:
     return user_service.create_new_consumer(requestBody=userDetails ,db=db, user_info=user_info)
+
+def verify_internal_secret(x_internal_secret: str = Header(...)) -> None:
+    print("Received secret:", repr(x_internal_secret))
+    print("Expected secret:", repr(TRASHPOINT_INTERNAL_API_SECRET))
+    if x_internal_secret != TRASHPOINT_INTERNAL_API_SECRET:
+        raise HTTPException(status_code=403, detail="Forbidden")
