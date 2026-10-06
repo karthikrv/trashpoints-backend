@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+import src.kiosks.models
 from src.firebase import get_firebase_app
 from src.users.router import router
 

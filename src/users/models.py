@@ -9,7 +9,7 @@ from src.database import Base
 class User(Base):
     __tablename__ = 'user'
 
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     email = Column(String(255), nullable=True, unique=True)
     name = Column(String(255))
     phone = Column(String(20), nullable=True, unique=True)

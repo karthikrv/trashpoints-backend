@@ -1,7 +1,7 @@
 import uuid
 
-from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, String,
-                        func)
+from sqlalchemy import (Boolean, Column, DateTime, Float, ForeignKey, Integer,
+                        String, func)
 from sqlalchemy.orm import relationship
 
 from src.database import Base
@@ -17,7 +17,7 @@ class Kiosk(Base):
   longitude = Column(Float, nullable=False)
   opening_time = Column(String(255), nullable=False)
   closing_time = Column(String(255), nullable=False)
-  status = Column(String(255), nullable=False)
+  status = Column(String(255), nullable=False, default="open")
   created_at = Column(DateTime, server_default=func.now())
   updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -28,10 +28,11 @@ class DropOffEvent(Base):
   __tablename__ = 'drop_off_event'
 
   id = Column(String(255), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
-  total_points = Column(Float, nullable=True)
+  total_points = Column(Integer, nullable=True)
   kiosk_id = Column(String(255), ForeignKey("kiosk.id"), nullable=False)
   collector_id = Column(String(255), ForeignKey("user.id"), nullable=False)
   depositor_id = Column(String(255), ForeignKey("user.id"), nullable=False)
+  status = Column(String(255), nullable=False, default="open")
   created_at = Column(DateTime, server_default=func.now())
   updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -46,7 +47,7 @@ class DropOffEventItem(Base):
 
   id = Column(String(255), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
   waste_type = Column(String(255), nullable=False)
-  points = Column(Float, nullable=True)
+  points = Column(Integer, nullable=True)
   weight = Column(Float, nullable=True)
   drop_off_event_id = Column(String(255), ForeignKey("drop_off_event.id"), nullable=False)
   created_at = Column(DateTime, server_default=func.now())
@@ -60,9 +61,9 @@ class PointTransaction(Base):
   id = Column(String(255), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
   depositor_id = Column(String(255), ForeignKey("user.id"), nullable=False)
   type = Column(String(255), nullable=False)
-  points = Column(Float, nullable=False)
+  points = Column(Integer, nullable=False)
   drop_off_event_id = Column(String(255), ForeignKey("drop_off_event.id"), nullable=True, unique=True)
-  redemption_id = Column(String(255), ForeignKey("redemption.id"), nullable=True)
+  redemption_id = Column(String(255), ForeignKey("redemption.id"), nullable=True, unique=True)
   description = Column(String(255), nullable=True)
   created_at = Column(DateTime, server_default=func.now())
 
@@ -75,9 +76,9 @@ class Redemption(Base):
 
   id = Column(String(255), primary_key=True, default=lambda: str(uuid.uuid4()), unique=True)
   depositor_id = Column(String(255), ForeignKey("user.id"), nullable=False)
-  points = Column(Float, nullable=False)
+  points = Column(Integer, nullable=False)
   type = Column(String(255), nullable=False)
-  status = Column(String(255), nullable=True)
+  status = Column(String(255), nullable=False, default="pending")
   redeemed_at = Column(DateTime, nullable=True)
   created_at = Column(DateTime, server_default=func.now())
   updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
